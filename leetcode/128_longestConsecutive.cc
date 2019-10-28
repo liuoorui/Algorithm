@@ -5,6 +5,25 @@ using namespace std;
 
 class Solution {
 public:
+	int longestConsecutive2(vector<int>& nums) {
+        unordered_set<int> uset(nums.cbegin(), nums.cend());
+        int ans = 0;
+        
+        for (int num : nums) {
+            if (uset.find(num - 1) != uset.end())
+                continue;
+            
+            int curr_len = 1;
+            while (uset.find(num + 1) != uset.end()) {
+                ++curr_len;
+                ++num;
+            }
+            ans = max(ans, curr_len);
+        }
+        
+        return ans;
+    }
+
 	int longestConsecutive(vector<int>& nums) {
 		// 每段连续序列的首尾数字在哈希表中value值存储段长度；
 		// 只更新新段的首尾部分；
