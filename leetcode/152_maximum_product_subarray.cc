@@ -1,19 +1,19 @@
-#include <iostream>
-#include <vector>
-using namespace std;
-
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
-        int maxPos = 1, maxNeg = 1, ans = 0x80000000;
+        int ans = INT_MIN;
+        int curr_max = 1;
+        int curr_min = 1;
         
-        for (int num: nums) {
-            int a = maxPos*num, b = maxNeg*num;
+        for (auto num : nums) {
+            curr_max *= num;
+            curr_min *= num;
             
-            ans = max(ans, max(a, b));
-            
-            maxPos = max(1, max(a, b));
-            maxNeg = min(1, min(a, b));
+            if (curr_max < curr_min) 
+                swap(curr_max, curr_min);
+            ans = max(ans, curr_max);
+            if (curr_max <= 0) curr_max = 1;
+            if (curr_min >= 0) curr_min = 1;
         }
         
         return ans;
