@@ -5,35 +5,35 @@ using namespace std;
 class Solution {
 public:
     string multiply(string num1, string num2) {
-        const int leng1 = num1.size(), leng2 = num2.size(), 
-            leng = leng1 + leng2;
-        int n1[leng1], n2[leng2], n[leng];
-        int i = leng1 - 1, j = leng2 - 1, carry = 0;
-        string res = "";
-        memset(n1, 0, sizeof(n1));
-        memset(n2, 0, sizeof(n2));
-        memset(n, 0, sizeof(n));
-        
-        for (char ch: num1) n1[i--] = ch - '0';
-        for (char ch: num2) n2[j--] = ch - '0';
-        
-        for (i=0; i<leng1; ++i)
-            for (j=0; j<leng2; ++j) {
-                n[i+j] += n1[i] * n2[j];
+        if (num1.size() > num2.size()) num1.swap(num2);
+        size_t len1 = num1.size(), len2 = num2.size();
+        vector<int> product(len1 + len2);
+
+        // 不处理进位，相乘。
+        for (size_t i = 0; i < len1; ++i) {
+            int curr1 = num1[len1 - 1 - i] - '0';
+
+            for (size_t j = 0; j < len2; ++j) {
+                int curr2 = num2[len2 - 1 - j] - '0';
+                product[i + j] += curr1 * curr2;
             }
-        
-        for (int num: n) {
-            res = to_string((num+carry)%10) + res;
-            carry = (num+carry)/10;
         }
-        while (carry) {
-            res = to_string(carry%10) + res;
-            carry /= 10;
+
+        // 处理进位。
+        int carry = 0;
+        for (size_t i = 0; i < product.size(); ++i) {
+            product[i] += carry;
+            carry = product[i] / 10;
+            product[i] %= 10;
         }
-        
-        i = 0;
-        while (i<res.size()-1 && res[i]=='0') ++i;
-        
-        return res.substr(i);
+
+        // 转到字符串。
+        int idx = product.size() - 1;
+        while (idx > 0 && product[idx] == 0) --idx;
+        string ans;
+        while (idx >= 0) {
+            ans.push_back('0' + product[idx--]);
+        }
+        return ans;
     }
 };

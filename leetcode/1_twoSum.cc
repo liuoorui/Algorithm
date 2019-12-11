@@ -6,23 +6,23 @@ using namespace std;
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
-        unordered_map<int, int> map;
-        vector<int> ret;
-
-        for (int i=0; i<nums.size(); ++i) {
-            if (map.find(nums[i]) != map.end()) {
-                ret.push_back(map[nums[i]]);
-                ret.push_back(i);
-                break;
+        unordered_map<int, int> umap;
+        vector<int> ans(2);
+        
+        for (int i = 0; i < nums.size(); ++i) {
+            auto iter = umap.find(nums[i]);
+            
+            if (iter != umap.end()) {
+                ans[0] = iter->second;
+                ans[1] = i;
+            } else {
+                umap[target - nums[i]] = i;
             }
-
-            map[target-nums[i]] = i;
         }
-
-        return ret;
+        
+        return ans;
     }
 };
-
 int main() {
     int n, target;
     cout<<"input the length of nums: ";

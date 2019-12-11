@@ -9,31 +9,20 @@ struct TreeNode {
 class Solution {
 public:
     vector<int> rightSideView(TreeNode* root) {
-        queue<TreeNode *>   que;
-        vector<int>         res;
-        
-        if (!root) return res;
-        que.push(root);
-        que.push(nullptr);
-        
-        while (!que.empty()) {
-            TreeNode *curr;
-            int       val;
-            while (curr = que.front()) {
-                val = curr->val;
-                que.pop();
-                if (curr->left)
-                    que.push(curr->left);
-                if (curr->right)
-                    que.push(curr->right);
-            }
-            que.pop();
-            if (!que.empty())
-                que.push(nullptr);
-            
-            res.push_back(val);
-        }
-        
-        return res;
+        vector<int> ans;
+        traverse(root, 1, ans);
+        return ans;
+    }
+private:
+    void traverse(const TreeNode* root, int level, vector<int>& side_view) {
+        if (!root) return;
+        if (side_view.size() < level)
+            side_view.push_back(root->val);
+        else
+            side_view[level - 1] = root->val;
+
+        ++level;
+        traverse(root->left, level, side_view);
+        traverse(root->right, level, side_view);
     }
 };
