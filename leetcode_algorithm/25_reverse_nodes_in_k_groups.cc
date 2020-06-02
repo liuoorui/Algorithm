@@ -11,49 +11,48 @@ struct ListNode {
 class Solution {
 public:
     ListNode* reverseKGroup(ListNode* head, int k) {
-        if (k < 1) return head;
-        ListNode *dummy = new ListNode(-1), 
-            *next, *r_head, *tail, *curr = dummy;
-        int cnt;
-        dummy->next = head;
-
-        while(head) {
-            cnt = 0;
-
-            tail = head;
-            r_head = reverseK(head, k, &next, cnt);
-            if (cnt != k) {
-                cnt = 0;
-                head = reverseK(r_head, k, &next, cnt);
-                curr->next = head;
+        std::unique_ptr<ListNode> dummy(new ListNode(0));
+        auto pre = dummy.get();
+        auto curr = head;
+        
+        while (curr) {
+            if (shorterThanK(curr, k)) {
+                pre->next = curr;
                 break;
+            } else {
+                // printf("reverse from %d\n", curr->val);
+                pre->next = reverseK(curr, k);
+                pre = curr;
+                curr = curr->next;
             }
-
-            curr->next = r_head;
-            tail->next = next;
-            head = next;
-            curr = tail;
         }
-
         return dummy->next;
     }
 private:
-    ListNode* reverseK(ListNode* head, int k, 
-            ListNode** next, int& cnt) {
-        ListNode *r_head = NULL;
-
-        while (head && cnt<k) {
-            ListNode *temp = head->next;
-
-            head->next = r_head;
-            r_head = head;
-            head = temp;
-
-            ++cnt;
-            *next = temp;
+    // 反转k个节点，返回反转后的头节点。
+    // 链表长度总是不小于k的。
+    ListNode* reverseK(ListNode *head, int k) {
+        ListNode *rhead = nullptr;
+        ListNode *curr = head, *tail = head;
+        
+        while (k--) {
+            auto next = curr->next;
+            curr->next = rhead;
+            rhead = curr;
+            curr = next;
         }
-
-        return r_head;
+        
+        tail->next = curr;
+        return rhead;
+    }
+    
+    bool shorterThanK(const ListNode *head, int k) {
+        auto curr = head;
+        
+        while (curr && --k) {
+            curr = curr->next;
+        }
+        return k != 0;
     }
 };
 
